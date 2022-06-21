@@ -1,0 +1,41 @@
+#!/bin/bash
+## first arguemtn is scratch data, second is is startdir and third is storedir
+SCRATCH=$1
+STARTDIR=$2
+STOREDIR=$3
+DATADIRPATH=$1/tst/
+
+CPM=~/Documents/CPM/TST-MD-V2/
+
+!newtemplate
+
+echo "newtemplate = ${newtemplate}"
+cp template.py ${newtemplate}.py
+cp template.par ${newtemplate}.par
+
+!DATADIR
+
+to_DATADIR=${DATADIRPATH}${DATADIR}
+echo "Scratch = $SCRATCH"
+
+mkdir ${DATADIRPATH}${DATADIR}
+echo "datadir = ${to_DATADIR}" >> ${newtemplate}.par
+
+!PARAMETERS
+
+echo "startdir = ${STARTDIR}"
+mv ./${newtemplate}.py ${CPM}/${newtemplate}.py
+mv ./${newtemplate}.par ${CPM}/${newtemplate}.par
+
+cp ${CPM}${newtemplate}.py $to_DATADIR
+cp ${CPM}/${newtemplate}.par $to_DATADIR
+
+cd ${CPM}
+#python focal_adhesion.py ${newtemplate} --mode=gpu
+(time python main.py ${newtemplate} ) > ${DATADIRPATH}${DATADIR}/std.out 2> ${DATADIRPATH}${DATADIR}/std.err # --mode=gpu
+cd $to_DATADIR
+cd ..
+!TAR
+tar -zcvf ${TAR}.tar.gz $DATADIR
+cp ${TAR}.tar.gz $STOREDIR
+rm ${CPM}/${newtemplate}.{py}

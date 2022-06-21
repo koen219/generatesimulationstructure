@@ -1,0 +1,47 @@
+# Parameter file for "contract"
+# on small field (200x200).
+
+# Cellular Potts parameters
+T = 300
+target_area = 1
+target_length = 300
+lambda = 0.01
+lambda2 = 0
+Jtable = Jcontract.dat
+conn_diss = 5000
+vecadherinknockout = true
+chemotaxis = 0
+extensiononly = false
+border_energy = 100
+
+neighbours = 2
+periodic_boundaries = false
+
+# PDE parameters
+n_chem = 1
+diff_coeff = 1e-13
+decay_rate = 1.25e-3
+secr_rate = 2.5e-3
+saturation = 0.
+dt = 2.
+dx = 2e-6
+pde_its = 15
+
+# initial conditions (create a "blob" of cells in the middle)
+n_init_cells = 1
+size_init_cells = 100
+
+cell_radius = 50
+sizex = 200
+sizey = 200
+divisions = 0
+rseed = 200
+subfield = 1.5
+relaxation = 100
+
+# output
+storage_stride = 1
+graphics = false
+store = true
+datadir = ./data
+
