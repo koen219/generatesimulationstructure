@@ -25,7 +25,7 @@ def generate_files(FOLDER, input):
         ]
         data_folder="${DATADIRPATH}"+data_folder + '/'
         t.extend([
-         f"echo \"datadir={data_folder}\" >> {parameterfile}.par\n" ,
+         f"echo \"datadir = {data_folder}\" >> {parameterfile}.par\n" ,
          f"echo \"ECM_write_path='{data_folder}'\" >> {parameterfile}.py\n",
          f"echo \"log_prefix='{data_folder}out_'\" >> {parameterfile}.py\n",
          f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n",
@@ -50,7 +50,7 @@ def generate_files(FOLDER, input):
             out =[]
             for i,p in enumerate(par):
                 if parameters[i][:3] == 'par':
-                    out.append(f"echo \"{parameters[i][3:]}={p}\" >> " + "${newtemplate}.par\n")
+                    out.append(f"echo \"{parameters[i][3:]} = {p}\" >> " + "${newtemplate}.par\n")
                 else:
                     out.append(f"echo \"{parameters[i]}={p}\" >> " + "${newtemplate}.py\n")
             return out
