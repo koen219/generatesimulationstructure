@@ -13,9 +13,6 @@ import numpy as np
 
 def generate_files(FOLDER, input):
     parameters = list(input.keys())
-    
-    
-    
     def general_structure_of_file():
         with open(f"{FOLDER}/template_job_file",'r') as file:
             out = file.readlines()
@@ -52,7 +49,10 @@ def generate_files(FOLDER, input):
         if (line == "PARAMETERS"):
             out =[]
             for i,p in enumerate(par):
-                out.append(f"echo \"{parameters[i]}={p}\" >> " + "${newtemplate}.py\n")
+                if parameters[i][:3] == 'par':
+                    out.append(f"echo \"{parameters[i][3:]}={p}\" >> " + "${newtemplate}.par\n")
+                else:
+                    out.append(f"echo \"{parameters[i]}={p}\" >> " + "${newtemplate}.py\n")
             return out
     
     ranges =[]
