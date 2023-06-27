@@ -15,7 +15,8 @@ echo "#### Starting"
 STARTDIR=$(pwd)
 DATA_DIR=${STARTDIR}/datastore/
 SCRATCH=${STARTDIR}/scratch/
-mkdir -p $SCRATCH
+mkdir -p $SCRATCH/tst
+
 chmod +x sim*sh
 echo "DATA_DIR = ${DATA_DIR}"
 cat jobs | while read job; do

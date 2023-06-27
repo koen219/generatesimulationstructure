@@ -1,6 +1,7 @@
 import sys, tempfile, os
 from subprocess import call
-from distutils.dir_util import copy_tree
+#from distutils.dir_util import copy_tree
+from shutil import copytree, ignore_patterns
 import editor
 
 
@@ -52,7 +53,10 @@ if yes_or_no=='n':
     print("Goodbye!")
     exit()
 print("Doing stuff")
-copy_tree(f"{PATH_TO_FOLDER}{COPY_FOLDER}", f"{PATH_TO_FOLDER}{name}")
+copytree(f"{PATH_TO_FOLDER}{COPY_FOLDER}", f"{PATH_TO_FOLDER}{name}", 
+#         ignore = lambda directory, contents: [f for f in contents if f[:3] != 'sim'] 
+          ignore = ignore_patterns("sim*sh")
+        )
 with open(f"{PATH_TO_FOLDER}{name}/template.py", 'bw') as f:
     f.write(parameterfile)
 with open(f"{PATH_TO_FOLDER}{name}/template.par", 'bw') as f:

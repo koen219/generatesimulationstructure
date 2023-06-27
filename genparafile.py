@@ -26,8 +26,9 @@ def generate_files(FOLDER, input):
         data_folder="${DATADIRPATH}"+data_folder + '/'
         t.extend([
          f"echo \"datadir = {data_folder}\" >> {parameterfile}.par\n" ,
-         f"echo \"ECM_write_path='{data_folder}'\" >> {parameterfile}.py\n",
-         f"echo \"log_prefix='{data_folder}out_'\" >> {parameterfile}.py\n",
+         f"echo \"storeprefix='{data_folder}'\" >> {parameterfile}.py\n",
+         #f"echo \"ECM_write_path='{data_folder}'\" >> {parameterfile}.py\n",
+         #f"echo \"log_prefix='{data_folder}'\" >> {parameterfile}.py\n",
          f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n",
         ])
         return t
