@@ -66,6 +66,8 @@ class ReplacementRules(Protocol):
     def apply(self, line: str,
               parset: Tuple[Parameter, ...], unique_name: str) -> List[str]: ...
 
+class GlobalRules(Protocol):
+    def apply(self, folder: Path, templatefile: Path): ...
 
 class SimulationGenerator:
     def __init__(self, folder: Path):
@@ -77,6 +79,7 @@ class SimulationGenerator:
         self.nameGenerator: NameGenerator = TrivialNameGenerator()
 
         self._replacementRules: Dict[str, ReplacementRules] = {}
+        self._globalRules: Dict[str, GlobalRules] = {}
     
     @property
     def parameters(self):
@@ -99,6 +102,9 @@ class SimulationGenerator:
     def add_replacement_rule(self, name: str, rule: ReplacementRules):
         self._replacementRules[name] = rule
 
+    def add_global_rule(self, name, rule: GlobalRules):
+        self._globalRules[name] = rule
+    
     def _writeFile(self, contents: List[str], filename: str):
         with open(self._folder / filename, 'w') as f:
             f.writelines(contents)
@@ -134,49 +140,20 @@ class SimulationGenerator:
                 else:
                     filename=f"run{unique_name}{file.suffix}"
                 self._writeFile(new_contents, filename)
-
+        for name, rule in self._globalRules.items():
+            rule.apply(self._folder, self._templates[name]) 
+            
 if __name__ == '__main__':
-
-    class tstmd_replacementrules:
-        def apply(self, line: str, parset: Tuple[Parameter, ...], unique_name: str):
-            print(f"Being applied to {line}")
-            if line == "newtemplate":
-                return [f"newtemplate=para_{unique_name}"]
-            elif line == "DATADIR":
-                data_folder="${DATADIRPATH}/" + f"data-{unique_name}/"
-                parameterfile=f"para_{unique_name}"
-                return [
-                    f"DATADIR={data_folder}\n",
-                    f"echo \"datadir = {data_folder}\" >> {parameterfile}.par\n",
-                    f"echo \"storeprefix='{data_folder}'\" >> {parameterfile}.py\n",
-                    f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n",
-                ]
-            elif line == "TAR":
-                return [f"TAR=run{unique_name}\n"]
-            elif line == "PARAMETERS":
-                out= []
-                for par in parset:
-                    name= par.name
-                    value= par.value
-                    if name.startswith('par'):
-                        out.append(
-                            f"echo \"{name[3:]} = {value}\" >> " + "${newtemplate}.par\n")
-                    else:
-                        out.append(
-                            f"echo \"{name} = {value}\" >> " + "${newtemplate}.py\n")
-                return out
-            else:
-                raise NotImplemented(
-                    f"Parsing line\n----{line}\n----\nis not implemented")
-
-
+    from tstmd import rr_Alice_shell, gr_Alice_slurm
     sm = SimulationGenerator(Path("/Users/koenkeijzer/Documents/generatesimulationstructure/simulation"))
 
     sm.add_template('py', "./template.py")
     sm.add_template('par', "./template.par")
     sm.add_template('sh', "./template.sh")
+    sm.add_template('slurm', "./job.slurm")
 
-    sm.add_replacement_rule('sh', tstmd_replacementrules())
+    sm.add_replacement_rule('sh', rr_Alice_shell())
+    sm.add_global_rule('slurm', gr_Alice_slurm())
 
     A = Parameters('A', list(range(3)))#, 'py')
     #B = Parameters('B', list(range(3,7)))#, 'py')
