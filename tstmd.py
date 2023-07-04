@@ -10,7 +10,7 @@ class rr_Alice_shell:
             data_folder = "${DATADIRPATH}/" + f"data-{unique_name}/"
             parameterfile = f"para_{unique_name}"
             return [
-                f"DATADIR={data_folder}\n",
+                f"DATADIR=data-{unique_name}\n",
                 f"echo \"datadir = {data_folder}\" >> {parameterfile}.par\n",
                 f"echo \"storeprefix='{data_folder}'\" >> {parameterfile}.py\n",
                 f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n",
