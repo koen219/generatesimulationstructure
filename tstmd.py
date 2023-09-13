@@ -15,8 +15,7 @@ class rr_Alice_shell:
                 f"DATADIR=data-{unique_name}\n",
                 f"echo \"datadir = {data_folder}\" >> {parameterfile}.par\n",
                 f"echo \"storeprefix='{data_folder}'\" >> {parameterfile}.py\n",
-                f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n",
-            ]
+                f"echo \"parfile = '{parameterfile}.par'\" >> {parameterfile}.py\n", ]
         elif line == "TAR":
             return [f"TAR=run{unique_name}\n"]
         elif line == "PARAMETERS":
@@ -96,3 +95,31 @@ class gr_Alice_slurm:
                           value
                     )
                 )
+
+class rr_Local:
+    def __init__(self, folder):
+        self._folder = folder
+    def apply(self, line: str, parset: Tuple[Parameter, ...], unique_name:str)->List[str]:
+        data_folder = f"{self._folder}/data-{unique_name}"
+        parfile = f"par_{unique_name}"
+        if line == 'INIT':
+            return [
+                f'CPM="/Users/koenkeijzer/Documents/CPM/TST-MD-V2/"\n',
+                f'DATAFOLDER="{data_folder}/"\n',
+                f'PARFILE={parfile}\n'
+                    ]
+
+        if line == 'PARAMETERS':
+            out = [ ]
+            for par in parset:
+                    name = par.name
+                    value = par.value
+                    if name.startswith('par'):
+                        out.append(
+                            f"echo \"{name[3:]} = {value}\" >> " + "${PARFILE}.par\n")
+                    else:
+                        out.append(
+                            f"echo \"{name} = {value}\" >> " + "${PARFILE}.py\n")
+            return out
+        raise NotImplementedError()
+
