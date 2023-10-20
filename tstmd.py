@@ -87,7 +87,7 @@ class gr_Alice_slurm:
             # TODO: Automatically add gpu node
             value = f"#SBATCH --partition=\"{node}\"\n"
             if 'gpu' in node:
-                value += "#SBATCH --gpu=1\n"
+                value += "#SBATCH --gpus=1\n"
         
             self._linerules.append(
                 _LineRule('time', 
@@ -104,7 +104,6 @@ class rr_Local:
         parfile = f"par_{unique_name}"
         if line == 'INIT':
             return [
-                f'CPM="/Users/koenkeijzer/Documents/CPM/TST-MD-V2/"\n',
                 f'DATAFOLDER="{data_folder}/"\n',
                 f'PARFILE={parfile}\n'
                     ]
