@@ -23,7 +23,7 @@ class rr_Alice_shell:
                 name = par.name
                 value = par.value
                 out.append(
-                    f"echo \"{name[3:]} = {value}\" >> " + "${newtemplate}.par\n")
+                    f"echo \"{name} = {value}\" >> " + "${newtemplate}.par\n")
             return out
         else:
             raise RuntimeError(f"Parsing line\n----{line}\n----\nis not implemented")
@@ -108,7 +108,7 @@ class rr_Local:
                     name = par.name
                     value = par.value
                     out.append(
-                        f"echo \"{name[3:]} = {value}\" >> " + "${PARFILE}.par\n")
+                        f"echo \"{name} = {value}\" >> " + "${PARFILE}.par\n")
             return out
         raise NotImplementedError()
 
