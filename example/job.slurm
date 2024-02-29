@@ -4,8 +4,8 @@
 #SBATCH --error=%x_%A_%a.err
 #SBATCH --mail-user="k.a.e.keijzer@math.leidenuniv.nl"
 #SBATCH --mail-type="BEGIN","END","FAIL"
-#SBATCH --partition="gpu-short"
-#SBATCH --time=01:30:00
+#SBATCH --partition="cpu-short"
+#SBATCH --time=0-03:00:00
 #hSBATCH --ntasks=20
 #SBATCH --mem-per-cpu=15G
 #SBATCH --gpus=1
@@ -17,10 +17,10 @@ DATA_DIR=${STARTDIR}/datastore/
 SCRATCH=${STARTDIR}/scratch/
 mkdir -p $SCRATCH/tst
 
-chmod +x sim*sh
+chmod +x run*sh
 echo "DATA_DIR = ${DATA_DIR}"
 cat jobs | while read job; do
-	bash $job $SCRATCH $STARTDIR $DATA_DIR &
+	./$job $SCRATCH $STARTDIR $DATA_DIR &
 done
 #eval ${SIMULATION} ${SCRATCH} ${STARTDIR} ${DATA_DIR}
 cp job.slurm $DATA_DIR

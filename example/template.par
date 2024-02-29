@@ -7,12 +7,14 @@ target_area = 1
 target_length = 300
 lambda = 0.01
 lambda2 = 0
-Jtable = parameterfiles/Jextension.dat
+Jtable = ../data/J.dat
 conn_diss = 5000
 vecadherinknockout = true
 chemotaxis = 0
 extensiononly = false
 border_energy = 100
+
+mcs = 100
 
 neighbours = 2
 periodic_boundaries = false
@@ -43,6 +45,5 @@ relaxation = 0
 storage_stride = 1
 graphics = false
 store = true
-datadir = ./data
 Ah =  700
 lambdac = 120000
