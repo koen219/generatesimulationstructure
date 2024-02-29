@@ -10,3 +10,9 @@ description = "Used to generate files parameterfiles"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["generatesimulationstructure"]
+
+[tool.setuptools.package-dir]
+generatesimulationstructure = "src"

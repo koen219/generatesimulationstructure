@@ -9,7 +9,7 @@
 #hSBATCH --ntasks=20
 #SBATCH --mem-per-cpu=15G
 #SBATCH --gpus=1
-#SBATCH --array=1-20
+#SBATCH --array=1-9
 echo "#### Starting"
 
 STARTDIR=$(pwd)
