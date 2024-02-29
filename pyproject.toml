@@ -1,0 +1,12 @@
+[project]
+name = "generatesimulationstructure"
+version = "1.0.0"
+
+authors = [
+    { name = "Koen", email="koen19@gmail.com"} 
+]
+description = "Used to generate files parameterfiles"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
