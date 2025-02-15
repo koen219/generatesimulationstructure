@@ -28,13 +28,13 @@ def new(name, template):
 
     os.makedirs(name, exist_ok=True)
 
-    # Copy parameters.ymmsl from the template
-    param_src = os.path.join(template_path, "parameters.ymmsl")
-    param_dst = os.path.join(name, "parameters.ymmsl")
+    # Copy baseparameters from the template
+    param_src = os.path.join(template_path, "baseparameters")
+    param_dst = os.path.join(name, "baseparameters")
     if os.path.exists(param_src):
         shutil.copy(param_src, param_dst)
     else:
-        click.echo(f"Warning: parameters.ymmsl missing in template '{template}'.")
+        click.echo(f"Warning: baseparameters missing in template '{template}'.")
 
     # Generate config.yaml
     # config_data = {"template": template, "search": {}, "with": {}}
@@ -67,9 +67,9 @@ def create(folder, number_of_cores):
         click.echo(f"Error: Template '{template}' not found.", err=True)
         return
 
-    basepar_path = Path(os.path.join(folder, "parameters.ymmsl")).resolve()
+    basepar_path = Path(os.path.join(folder, "baseparameters")).resolve()
     if not basepar_path.exists():
-        click.echo(f"Error: parameters.ymmsl not found in specified folder", err=True)
+        click.echo(f"Error: baseparameters not found in specified folder", err=True)
         return
 
     # Load config.py from the template folder
@@ -139,12 +139,12 @@ def add(name, config, par):
     config_dest = os.path.join(template_path, "config.py")
     shutil.copy(config_source, config_dest)
 
-    # Copy parameters.ymmsl
+    # Copy baseparameters
     if not os.path.isfile(par):
         click.echo(f"Error: Parameter file {par} not found", err=True)
         return
 
-    shutil.copy(par, os.path.join(template_path, "parameters.ymmsl"))
+    shutil.copy(par, os.path.join(template_path, "baseparameters"))
 
     click.echo(f"Template '{name}' added successfully.")
 
