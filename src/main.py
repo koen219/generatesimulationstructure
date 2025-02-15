@@ -2,7 +2,9 @@ import os
 import shutil
 import yaml
 import importlib.util
+from pathlib import Path
 import click
+from .parse import parse_parameter
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIR = os.path.join(SCRIPT_DIR, "../templates")
@@ -47,7 +49,8 @@ def new(name, template):
 
 @cli.command()
 @click.argument("folder")
-def create(folder):
+@click.option("--number_of_cores", type=int)
+def create(folder, number_of_cores):
     """Generate simulation files based on config."""
     config_path = os.path.join(folder, "config.yaml")
     if not os.path.exists(config_path):
@@ -64,6 +67,11 @@ def create(folder):
         click.echo(f"Error: Template '{template}' not found.", err=True)
         return
 
+    basepar_path = Path(os.path.join(folder, "parameters.ymmsl")).resolve()
+    if not basepar_path.exists():
+        click.echo(f"Error: parameters.ymmsl not found in specified folder", err=True)
+        return
+
     # Load config.py from the template folder
     config_py_path = os.path.join(template_path, "config.py")
     if not os.path.exists(config_py_path):
@@ -74,9 +82,20 @@ def create(folder):
     config_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config_module)
 
+    if not number_of_cores:
+        if "number_of_cores" in config:
+            number_of_cores = config.get("number_of_cores")
+        else:
+            click.echo(
+                f"No 'number_of_cores' specified as argument or in 'config.yaml'"
+            )
+            return
+
     # Call the function in config.py
-    param_list = list(config.items())
-    generated_files = config_module.generate_files(param_list)
+    param_list = parse_parameter(config)  # list(config.items())
+    generated_files = config_module.generate_files(
+        basepar_path, param_list, number_of_cores
+    )
 
     # Write output files
     for filename, content in generated_files.items():
@@ -89,28 +108,65 @@ def create(folder):
 
 @cli.command()
 @click.option("--name", required=True, help="Name of the new template")
-def add(name):
-    """Add a new template for simulations."""
-    new_template_path = os.path.join(TEMPLATE_DIR, name)
-    os.makedirs(new_template_path, exist_ok=True)
+@click.option(
+    "--config",
+    required=True,
+    help="Name of the configuration file to use or of the template that has already a config.py",
+)
+@click.option("--par", required=True, help="Name of parameter file to use")
+def add(name, config, par):
+    """Add a template to be used for new simulations."""
+    template_path = os.path.join(TEMPLATE_DIR, name)
 
-    param_path = os.path.join(new_template_path, "parameters.ymmsl")
-    config_py_path = os.path.join(new_template_path, "config.py")
+    # Create template directory
+    os.makedirs(template_path, exist_ok=True)
 
-    # Create default parameters.ymmsl if missing
-    if not os.path.exists(param_path):
-        with open(param_path, "w") as f:
-            f.write("# Default parameters file\n")
+    # Determine the source for config.py
+    config_source = None
+    if os.path.isfile(config):
+        config_source = config  # Direct file path
+    elif os.path.isdir(os.path.join(TEMPLATE_DIR, config)):
+        existing_template = os.path.join(TEMPLATE_DIR, config, "config.py")
+        if os.path.isfile(existing_template):
+            config_source = existing_template  # Copy from existing template
+    else:
+        click.echo(
+            f"Error: {config} is not a valid file or existing template", err=True
+        )
+        return
 
-    # Create default config.py if missing
-    if not os.path.exists(config_py_path):
-        with open(config_py_path, "w") as f:
-            f.write(
-                "def generate_files(params):\n"
-                "    return {'example.txt': 'This is a default generated file.'}\n"
-            )
+    # Copy config.py
+    config_dest = os.path.join(template_path, "config.py")
+    shutil.copy(config_source, config_dest)
+
+    # Copy parameters.ymmsl
+    if not os.path.isfile(par):
+        click.echo(f"Error: Parameter file {par} not found", err=True)
+        return
+
+    shutil.copy(par, os.path.join(template_path, "parameters.ymmsl"))
 
     click.echo(f"Template '{name}' added successfully.")
+
+
+@cli.command
+@click.option("--name", required=True, help="Name of template to remove")
+def remove(name):
+    """Remove a template."""
+    template_path = os.path.join(TEMPLATE_DIR, name)
+    if not os.path.exists(template_path):
+        click.echo(f"Template '{name}' does not exists!", err=True)
+        return
+
+    shutil.rmtree(template_path)
+
+
+@cli.command
+def list():
+    """List all templates."""
+    click.echo("Current templates are:")
+    for name in [f.name for f in os.scandir(TEMPLATE_DIR) if f.is_dir()]:
+        click.echo(f" - {name}")
 
 
 if __name__ == "__main__":
