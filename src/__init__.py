@@ -1,4 +1,1 @@
-from .simulationgenerator import SimulationGenerator, Parameter, Parameters
-
-
-
+from .main import *

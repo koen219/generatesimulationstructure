@@ -1,11 +1,15 @@
 [project]
 name = "generatesimulationstructure"
-version = "1.0.0"
+version = "2.0.0"
 
 authors = [
     { name = "Koen", email="koen19@gmail.com"} 
 ]
 description = "Used to generate files parameterfiles"
+
+[project.scripts]
+gensim = "generatesimulationstructure:cli"
+
 
 [build-system]
 requires = ["setuptools>=61.0"]
