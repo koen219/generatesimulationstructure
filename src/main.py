@@ -150,6 +150,41 @@ def add(name, config, par):
 
 
 @cli.command
+@click.option("--name", required=True, help="Name of template to change")
+@click.option("--par", required=False, help="Name of parameter file to change")
+@click.option("--config", required=False, help="Name of config to change")
+def update(name, config, par):
+    template_path = os.path.join(TEMPLATE_DIR, name)
+    if not os.path.exists(template_path):
+        click.echo(f"Template '{name}' does not exists!", err=True)
+        return
+
+    if config is None and par is None:
+        click.echo(
+            f"Specify '--config' or '--par' to change the config.py file or the 'baseparameters' parameter file.",
+            err=True,
+        )
+        return
+
+    if config and not os.path.exists(config):
+        click.echo(f"Can not find config file '{config}'", err=True)
+        return
+
+    if par and not os.path.exists(par):
+        click.echo(f"Can not find par file '{par}'", err=True)
+        return
+
+    if config:
+        config_dest = os.path.join(template_path, "config.py")
+        shutil.copy(config, config_dest)
+        click.echo("Updated config file")
+
+    if par:
+        par_dest = os.path.join(template_path, "baseparameters")
+        shutil.copy(par, par_dest)
+
+
+@cli.command
 @click.option("--name", required=True, help="Name of template to remove")
 def remove(name):
     """Remove a template."""
