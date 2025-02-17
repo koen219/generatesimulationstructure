@@ -149,7 +149,7 @@ def add(name, config, par):
     click.echo(f"Template '{name}' added successfully.")
 
 
-@cli.command
+@cli.command()
 @click.option("--name", required=True, help="Name of template to change")
 @click.option("--par", required=False, help="Name of parameter file to change")
 @click.option("--config", required=False, help="Name of config to change")
@@ -184,7 +184,7 @@ def update(name, config, par):
         shutil.copy(par, par_dest)
 
 
-@cli.command
+@cli.command()
 @click.option("--name", required=True, help="Name of template to remove")
 def remove(name):
     """Remove a template."""
@@ -196,7 +196,7 @@ def remove(name):
     shutil.rmtree(template_path)
 
 
-@cli.command
+@cli.command()
 def list():
     """List all templates."""
     click.echo("Current templates are:")
