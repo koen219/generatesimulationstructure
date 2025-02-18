@@ -103,7 +103,9 @@ def create(folder, number_of_cores):
         with open(output_path, "w") as f:
             f.write(content)
 
-    click.echo(f"Generated {len(generated_files)} files in '{folder}'.")
+    click.echo(
+        f"Generated {len(generated_files)} files in '{folder}' given {len(param_list)} parameter combinations."
+    )
 
 
 @cli.command()
