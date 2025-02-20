@@ -12,6 +12,20 @@ def generateName(parameters) -> str:
 from pathlib import Path
 
 
+def generate_additional_init(name):
+    folder = Path(name).resolve()
+
+    (folder / "J.dat").write_text(
+        """\
+4
+0
+50 50
+50 50 50
+50 50 40 50
+"""
+    )
+
+
 def generate_files(basepar, params, number_of_cores):
     """This is the only function needed to be implemented in a config.py.
 
@@ -38,6 +52,9 @@ def generate_files(basepar, params, number_of_cores):
 
         for p in par:
             config.settings[p[0]] = p[1]
+        config.settings["cellular_potts.Jtable"] = str(
+            (Path(rundir) / "../J.dat").resolve()
+        )
         Path(rundir).mkdir(exist_ok=False)
         filenames.append(filename + ".ymmsl")
         filesubstance.append(ymmsl.dump(config))

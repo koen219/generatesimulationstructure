@@ -36,6 +36,16 @@ def new(name, template):
     else:
         click.echo(f"Warning: baseparameters missing in template '{template}'.")
 
+    config_py_path = os.path.join(template_path, "config.py")
+    spec = importlib.util.spec_from_file_location("config_module", config_py_path)
+    config_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config_module)
+
+    # Some setups, such as the TST, do not put all their parameters in a single file.
+    # This additional function, creates the new parameterfile from config.py
+    if hasattr(config_module, "generate_additional_init"):
+        config_module.generate_additional_init(name)
+
     # Generate config.yaml
     # config_data = {"template": template, "search": {}, "with": {}}
     config_path = os.path.join(name, "config.yaml")
