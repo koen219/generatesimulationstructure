@@ -136,12 +136,13 @@ def generate_files(basepar, params, number_of_cores):
         filesubstance.append(yaml.dump(parfile))
 
         # run_command = f'"muscle_manager --run-dir {rundir} --start-all {filename}.ymmsl && TSTplot {rundir} video {rundir}/instances/state_dumper/workdir/ --pde --draw-nascent-adhesions false && sh ./makemovie.sh {rundir}/instances/state_dumper/workdir/ && cp {rundir}/instances/state_dumper/workdir/movie.mp4 ./{filename}.mp4"\n'
-        run_command = f"\"python {code_dir}/run.py {filename}.yaml\"\n"
+        run_command = f"\"python {code_dir}/run.py {filename}.yaml && . {code_dir}/../blender/bin/activate && python {code_dir}/../plot_blender.py video {rundir} && sh makemovie.sh {rundir} && mv {rundir}/movie.mp4 ./mov_{name}.mp4\"\n"
         run_commands += run_command
 
     makemovie = 'cd $1\nffmpeg -r 10 -pattern_type glob -i "*.png" -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -f mp4 -vcodec libx264 -pix_fmt yuv420p movie.mp4'
 
     run = f"""
+. {code_dir}/../venv/bin/activate
 chmod +x makemovie.sh
 cat runs.txt | xargs -n 1 -P{number_of_cores} sh -c
 """
