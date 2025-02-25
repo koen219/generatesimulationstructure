@@ -194,6 +194,7 @@ def update(name, config, par):
     if par:
         par_dest = os.path.join(template_path, "baseparameters")
         shutil.copy(par, par_dest)
+        click.echo("Updated parameter file")
 
 
 @cli.command()
