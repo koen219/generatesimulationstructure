@@ -5,7 +5,10 @@ def generateName(parameters) -> str:
     name = ""
     for par in parameters:
         name += par[0].split(".")[-1]
-        name += str(par[1]).replace(".", "_")
+        if isinstance(par[1], list):
+            name += ",".join(str(x).replace(".", "_") for x in par[1])
+        else:
+            name += str(par[1]).replace(".", "_")
     return name
 
 
